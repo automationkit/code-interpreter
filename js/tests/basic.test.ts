@@ -1,13 +1,14 @@
-import { CodeInterpreter } from '../src'
+import { expect } from 'vitest'
+import { isDebug, sandboxTest, secureSandboxTest } from './setup'
 
-import { expect, test } from 'vitest'
-
-test('basic', async () => {
-  const sandbox = await CodeInterpreter.create()
-
-  const result = await sandbox.notebook.execCell('x =1; x')
+sandboxTest('basic', async ({ sandbox }) => {
+  const result = await sandbox.runCode('x =1; x')
 
   expect(result.text).toEqual('1')
+})
 
-  await sandbox.close()
+secureSandboxTest.skipIf(isDebug)('secure access', async ({ sandbox }) => {
+  const result = await sandbox.runCode('x =1; x')
+
+  expect(result.text).toEqual('1')
 })

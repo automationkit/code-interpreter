@@ -5,6 +5,13 @@ on:
     secrets:
       E2B_API_KEY:
         required: true
+    inputs:
+      E2B_DOMAIN:
+        required: false
+        type: string
+      E2B_TESTS_TEMPLATE:
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -14,16 +21,16 @@ jobs:
     defaults:
       run:
         working-directory: ./python
-    name: Build and test SDK
-    runs-on: ubuntu-20.04
+    name: Python SDK - Build and test
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.12'
 
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
@@ -43,3 +50,5 @@ jobs:
         run: poetry run pytest --verbose -x
         env:
           E2B_API_KEY: ${{ secrets.E2B_API_KEY }}
+          E2B_DOMAIN: ${{ inputs.E2B_DOMAIN }}
+          E2B_TESTS_TEMPLATE: ${{ inputs.E2B_TESTS_TEMPLATE }}
